@@ -4,6 +4,8 @@ import couple from '../assets/image 62.png'
 import { validateAccountInput } from '../services/authValidation.js'
 import { safeReturnDestination } from '../routing.js'
 import './AuthScreens.css'
+import AuthHeader from './AuthHeader'
+import BrandLogo from './BrandLogo'
 
 export function DemoNotice() {
   return <p className="auth-demo-notice">Demo mode — simulated data and actions</p>
@@ -88,13 +90,11 @@ export function AuthScreens({ screen, services, session, onSessionChange, naviga
   }
 
   return <div className={`auth-page auth-${screen}`}>
-    <header className="auth-header">
-      <AuthLink to="/" navigate={navigate} className="auth-wordmark" aria-label="PHASIONABLE welcome">PHASIONABLE</AuthLink>
-      {session ? <button className="auth-header-link" onClick={async () => {
-        try { await services.accounts.logout(); onSessionChange(null); navigate('/') }
-        catch (error) { setFeedback({ type: 'error', message: error.message }) }
-      }}>Log out</button> : null}
-    </header>
+    <AuthHeader navigate={navigate} session={session} onLogout={async () => {
+      await services.accounts.logout()
+      onSessionChange(null)
+      navigate('/')
+    }} />
     <main className="auth-stage">
       <img className="auth-photo" src={couple} alt="" />
       <div className="auth-overlay" />
@@ -166,7 +166,7 @@ export function GuardedPlaceholder({ role, session, services, onSessionChange, n
   const destination = window.location.pathname + window.location.search
   const permitted = session?.role === role
   return <div className="auth-page auth-placeholder">
-    <header className="auth-header"><AuthLink to="/" navigate={navigate} className="auth-wordmark">PHASIONABLE</AuthLink></header>
+    <header className="auth-header"><BrandLogo navigate={navigate} /></header>
     <main className="placeholder-content">
       <h1>{permitted ? `${role[0].toUpperCase() + role.slice(1)} workspace` : session ? 'This area belongs to another role' : 'Log in to continue'}</h1>
       <p>{permitted ? 'Development placeholder. This workflow is scheduled for a later milestone.' : 'Fictional sessions and frontend route guards are demonstrations, not production security.'}</p>

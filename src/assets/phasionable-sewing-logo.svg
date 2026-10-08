@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 5 18 20" fill="none">
+  <title>PHASIONABLE sewing monogram</title>
+  <desc>Vector approximation traced from the supplied WhatsApp raster: shaded green P, needle, looping thread, and four-hole button.</desc>
+  <defs>
+    <linearGradient id="p-green" x1="20" y1="6" x2="25" y2="24" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#65b78e"/>
+      <stop offset=".48" stop-color="#398b63"/>
+      <stop offset="1" stop-color="#1e5e41"/>
+    </linearGradient>
+    <linearGradient id="bowl-green" x1="25" y1="6" x2="29" y2="16" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5ec99a"/>
+      <stop offset=".55" stop-color="#358260"/>
+      <stop offset="1" stop-color="#225e40"/>
+    </linearGradient>
+    <mask id="button-holes">
+      <circle cx="25.2" cy="19" r="2" fill="white"/>
+      <g fill="black">
+        <circle cx="24.6" cy="18.4" r=".34"/>
+        <circle cx="25.8" cy="18.4" r=".34"/>
+        <circle cx="24.6" cy="19.6" r=".34"/>
+        <circle cx="25.8" cy="19.6" r=".34"/>
+      </g>
+    </mask>
+  </defs>
+  <path fill="url(#p-green)" fill-rule="evenodd" d="M18.2 6H24.6C28.35 6 30.45 7.8 30.45 10.7C30.45 14.18 27.93 15.9 24.25 15.9H22V20.8C22 22.08 22.38 22.67 23.3 22.95V23.65H18V22.95C19.36 22.59 19.9 21.96 19.9 20.8V7.38H18.2ZM22 7.38V14.58H24.2C26.83 14.58 28.23 13.18 28.23 10.7C28.23 8.42 26.84 7.38 24.2 7.38Z"/>
+  <path fill="url(#bowl-green)" d="M24.6 6C28.35 6 30.45 7.8 30.45 10.7C30.45 14.18 27.93 15.9 24.25 15.9H22V14.58H24.2C26.83 14.58 28.23 13.18 28.23 10.7C28.23 8.42 26.84 7.38 24.2 7.38H22V6Z"/>
+  <path fill="#174f37" fill-opacity=".55" d="M21.44 7.38H22V20.8C22 22.08 22.38 22.67 23.3 22.95V23.65H21.62C21.42 21.08 21.44 13.07 21.44 7.38Z"/>
+  <path fill="#76b79b" fill-opacity=".65" d="M19.9 7.38H20.35V20.55C20.35 21.69 20.04 22.48 19.65 23.1H18.8C19.58 22.45 19.9 21.74 19.9 20.8Z"/>
+  <path fill="#32815e" fill-rule="evenodd" d="M17.62 6.62C17.1 6.62 16.94 7.24 16.98 8.01L17.22 18.23L17.66 17.4L18.18 8.01C18.22 7.24 18.12 6.62 17.62 6.62ZM17.61 7.22C17.36 7.22 17.31 7.61 17.34 8.1C17.38 8.52 17.42 8.78 17.59 8.78C17.77 8.78 17.84 8.52 17.87 8.1C17.9 7.61 17.86 7.22 17.61 7.22Z"/>
+  <path d="M17.75 6.72C15.81 6.67 14.98 7.91 15.16 9.36C15.29 10.49 16.05 11.06 17.27 11.13M17.34 12.02C17.42 12.76 18.17 13.1 18.12 13.88C18.05 14.62 17.25 14.77 17.28 15.55C17.32 16.3 18.03 16.25 17.81 17.01C17.6 17.68 16.69 18.22 16.21 18.4" stroke="#1b3e2f" stroke-opacity=".7" stroke-width=".55" stroke-linecap="round"/>
+  <g mask="url(#button-holes)">
+    <circle cx="25.2" cy="19" r="2" fill="#205b3f"/>
+    <circle cx="25.2" cy="19" r="1.76" stroke="#164d35" stroke-width=".35"/>
+  </g>
+</svg>

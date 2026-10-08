@@ -9,6 +9,7 @@
     "check:services": "node scripts/check-services.mjs",
     "check:auth": "node scripts/check-auth.mjs",
     "check:auth:browser": "node scripts/check-auth-browser.mjs",
+    "check:brand:browser": "node scripts/check-brand-header.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

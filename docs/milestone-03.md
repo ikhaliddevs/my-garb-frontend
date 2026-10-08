@@ -1,5 +1,17 @@
 # Milestone 03: Welcome and Demo Authentication
 
+## Branding and Header Refinement
+
+The rejected scrollwork SVG has been replaced by `src/assets/phasionable-sewing-logo.svg`. It traces the supplied `WhatsApp Image 2025-10-30 at 13.10.51_d6fde0ee.png`: a green P with a shaded stem/bowl, needle and looping thread on the left, and a four-hole button at the lower right. The original image is preserved as a visual reference only; the application imports only the new SVG. The obsolete SVG was removed. `BrandLogo.jsx` retains the same keyboard-accessible PHASIONABLE home link and 16 x 24 image box; all its product-header consumers use the correction. The central title, photo composition, desktop layout, browsing/signup actions, controls, and service contracts are unchanged.
+
+The new reference is only 46 x 32 pixels, with the actual mark occupying roughly 16 x 18 pixels. The needle-eye contour, exact thread crossings, button-hole contours, rim thickness, and precise shade boundaries remain blurred. Four holes follow the supplied identification; their small circular contours are approximate. Clean paths and transparent button holes replace raster blur without adding scrollwork, stitches, shadows, or a background. Colors are based on source samples, with restrained green shading. The SVG remains a reconstruction, not the original vector. Original font files remain missing.
+
+The user's explicit visual exception now permits a reference-style cart icon with `aria-disabled`, an accessible explanation, and a keyboard/hover tooltip: "Shopping cart is outside the current MVP." It deliberately has no action or navigation, no counts, and no cart/checkout/payment service or workflow. It stays focusable solely so keyboard users can discover why it is unavailable. Earlier instructions to remove the icon remain superseded only for this visual exception.
+
+The reference's small green Log out treatment appears only when the demo session is active. It calls the existing mock logout service, prevents repeated clicks while pending, clears the session, and returns home. Failure is announced with a retry instruction. Signed-out welcome visitors retain the existing Log in link.
+
+Verification and close-up comparisons are in `artifacts/milestone-03/header`; `logo-comparison.png` compares the supplied WhatsApp reference and SVG enlarged and at header scale. The button size/position was corrected after visual comparison. `npm run check:brand:browser` checks unchanged logo alignment/size on welcome/login/signup at 360/402/768/1280 widths, cart/keyboard/session behavior, and 3x-density header rendering. The original vector is still needed for exact fidelity. This logo correction does not authorize a commit, push, deployment, or later milestone.
+
 ## Screens and References
 
 - `/` or `/welcome`: SIGNUP HOME SCREEN.png (402 x 874).
@@ -32,7 +44,7 @@ Development identity selection still scopes the Milestone 02 service checks. Pro
 
 ## Visual Differences and Verification
 
-The original couple photo is available; no replacement photography is used. Exact fonts and the small reference monogram are missing. Arial and Georgia are explicit temporary font substitutes; a PHASIONABLE text wordmark substitutes for the missing monogram. Asset rights remain unverified. Cart and guest logout are removed, Email replaces phone/email, and role selection, password visibility, labels, signup login link, and the demo notice are intentional MVP adaptations. Tablet/desktop compositions are proposed adaptations.
+The original couple photo is available; no replacement photography is used. Exact fonts and the original reference monogram vector are missing. Arial and Georgia are explicit temporary font substitutes; the local decorative-P SVG now approximates the missing monogram. Asset rights remain unverified. Guest logout is removed; cart is only the explicitly requested unavailable header placeholder. Email replaces phone/email, and role selection, password visibility, labels, signup login link, and the demo notice are intentional MVP adaptations. Tablet/desktop compositions are proposed adaptations.
 
 The source PRD document was not found; AGENTS.md's reproduced requirements were used.
 
@@ -45,7 +57,7 @@ The source PRD document was not found; AGENTS.md's reproduced requirements were 
 - All six account screens and all three development routes had no horizontal overflow at 360, 768, and 1280 px. The demo notice remained in the viewport. Screenshots of welcome/login/signup at these widths were visually inspected; controls/text remain separate and readable. A native mobile device keyboard and assistive technology were not tested.
 - Each finished welcome/login/signup screen was compared side by side with its corresponding reference at 402 x 874. Comparisons are in `artifacts/milestone-03/{welcome,login,signup}-comparison.png`; individual viewport screenshots are in the same folder.
 
-Welcome reproduces the couple photo placement, central branding, and bottom actions. Login reproduces the photo crop, strong overlay, underlined fields, and button placement; field baselines/typography remain slightly different. Signup uses its own field spacing and overlay; its button is lower because role selection and approval guidance are required. Password visibility, email labels, login navigation, simulation copy, the persistent notice, missing-monogram text substitute, and removed cart/guest logout are intentional differences. Exact font and logo fidelity remains unverified until source assets arrive. Photo licensing and direct PRD comparison also remain unverified.
+Welcome reproduces the couple photo placement, central branding, and bottom actions. Login reproduces the photo crop, strong overlay, underlined fields, and button placement; field baselines/typography remain slightly different. Signup uses its own field spacing and overlay; its button is lower because role selection and approval guidance are required. Password visibility, email labels, login navigation, simulation copy, the persistent notice, approximate SVG monogram, unavailable cart, and removed guest logout are intentional differences. Exact font and logo fidelity remains unverified until source assets arrive. Photo licensing and direct PRD comparison also remain unverified.
 
 The in-app browser bridge failed with a missing sandboxPolicy error. Standalone Playwright with installed Edge completed the checks instead. The browser script defaults to `http://127.0.0.1:5173`; set `DEMO_URL` to test another local port. It uses an isolated browser context and does not change the user's existing browser data.
 

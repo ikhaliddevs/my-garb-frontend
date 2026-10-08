@@ -1,5 +1,11 @@
 # MY GARB Frontend Development Instructions
 
+## Milestone 03 Header Refinement Override
+
+The explicitly requested header refinement permits a reference-style shopping-cart icon only as an unavailable visual placeholder. It must explain "Shopping cart is outside the current MVP." accessibly and provide no cart navigation, counts, checkout, payment, or shopping behavior. This visual exception overrides earlier instructions to omit the icon, not the MVP exclusions.
+
+Use the local decorative-P SVG approximation through BrandLogo.jsx in the product headers. Preserve the central PHASIONABLE title. The raster-derived SVG is not the original Figma vector; record unresolved decorative details. Show mock Log out only for an active fictional session and preserve signed-out login navigation.
+
 ## Instructions for Codex
 
 - Implement only the milestone I explicitly request. Do not automatically continue to another milestone.

@@ -2,6 +2,8 @@
 
 ## Milestone 03
 
+- Logo correction: the rejected decorative SVG is replaced by a sewing-themed P traced from the supplied 46 x 32 WhatsApp image. Original vector, exact needle-eye/thread crossing contours, button-hole edges, rim width, and shading boundaries remain unresolved. No additional scrollwork is inferred. The explicitly requested unavailable cart icon remains a visual exception only, with no shopping functionality.
+
 - The latest implementation request includes the existing fictional admin identity in demo login, while the earlier plan limited administrator entry to development controls. Existing-admin demo login follows the latest request; public administrator registration remains unavailable. Real administrator access policy is unresolved.
 
 - The source PRD document is absent from the repository. Implementation follows the reproduced requirements in AGENTS.md; direct source-document comparison is unverified.

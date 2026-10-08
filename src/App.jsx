@@ -10,6 +10,7 @@ import {
 } from './services'
 import { isServiceError } from './services/errors'
 import { AuthScreens, DemoNotice, GuardedPlaceholder } from './auth/AuthScreens'
+import AuthHeader from './auth/AuthHeader'
 
 const navigation = [
   { label: 'Discover', path: '/' },
@@ -297,7 +298,11 @@ function App() {
   }
 
   if (route.type === 'discovery') {
-    return <div className="auth-page"><header className="auth-header"><LinkButton className="auth-wordmark" path="/">PHASIONABLE</LinkButton></header>
+    return <div className="auth-page"><AuthHeader navigate={navigateTo} session={sessionState.account} onLogout={async () => {
+      await sessionServices.accounts.logout()
+      onSessionChange(null)
+      navigateTo('/')
+    }} />
       <main className="placeholder-content"><h1>Designer discovery</h1><p>Development placeholder. Designer discovery arrives in Milestone 06.</p>
         <LinkButton className="auth-primary" path="/customer/requests-orders?designer=designer-kemi">Open request placeholder for fictional Kemi Atelier</LinkButton>
         <LinkButton path="/login">Log in</LinkButton>
