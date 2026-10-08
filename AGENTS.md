@@ -121,7 +121,7 @@ Request, measurement, specification, order, review, designer dashboard, and admi
 
 | Reference conflict | Follow the revised PRD |
 | --- | --- |
-| PHASIONABLE branding | Use working name MY GARB; final branding remains open. |
+| PHASIONABLE branding | Preserve PHASIONABLE wherever it appears in supplied Figma designs. MY GARB remains the project name in documentation. This correction overrides earlier visible-branding replacement instructions. |
 | Phone Number / Email | Email/password is the proposed baseline; phone sign-in is deferred. |
 | Cart, heart, six unlabeled navigation icons | Use labeled Discover, Requests and Orders, Messages, Profile; separate admin navigation. |
 | New Collection, 50% discount, Flash Sale, Shop Now | Replace with focused designer and portfolio discovery; no commerce controls. |
@@ -2353,3 +2353,414 @@ The PRD also requires:
 Those are separate work.
 
 Keep the adapter interface stable and replace the mock implementation only after agreed backend contracts are available.
+
+
+
+
+
+
+
+
+
+
+
+# MY GARB — Updated Figma Implementation Instructions
+
+## How This Update Applies
+
+This section updates the visual requirements in the existing frontend milestone plan.
+
+- Keep all 19 milestones in their existing order.
+- Preserve existing functional requirements, acceptance criteria, testing steps, and MVP scope.
+- Apply these visual instructions when implementing each requested milestone.
+- Where earlier instructions describe Figma as “visual direction,” use the compatible supplied designs as the visual implementation targets.
+- This update does not authorize additional features or automatically start another milestone.
+
+## Development Rules
+
+1. Implement only the milestone explicitly requested by the user.
+2. Inspect the existing project and preserve working code.
+3. Verify the milestone before marking it complete.
+4. Clearly identify mock data, authentication, messages, orders, approvals, and other simulated actions.
+5. Keep a visible “Demo mode — simulated data and actions” notice.
+6. Keep development-only role switches, scenario controls, reset tools, and component demonstrations separate from normal customer-facing pages.
+7. Use React, Vite, JavaScript, Bootstrap, and custom CSS.
+8. Use the separate service layer and mock adapter.
+9. Components must not directly depend on fixture arrays.
+10. Do not invent API endpoints or write backend code.
+11. Real-service mode must remain explicitly unconfigured until approved backend contracts are available.
+12. Flag missing or conflicting requirements instead of silently inventing product rules.
+13. Do not deploy or claim production readiness unless separately requested.
+
+## Relationship Between the Demo and Product Screens
+
+The milestone-01 shell is a development demonstration of layouts, navigation, reusable components, and interface states.
+
+It is not the finished welcome, login, discovery, or messages interface.
+
+The existing component demo may remain as a development-only tool.
+
+Its cream background, large serif headings, or other unrelated styling must not become the visual baseline for product screens.
+
+Product screens must follow the supplied green Figma designs as their milestones are implemented.
+
+- Milestone 03 introduces welcome, login, and sign-up screens.
+- Milestone 06 introduces designer discovery and public portfolio viewing.
+- Milestone 10 introduces conversation lists and chat threads.
+- Milestone 12 introduces custom-order lists and production timelines.
+
+Do not rebuild working logic unnecessarily to introduce these screens.
+
+## Source of Authority
+
+Use the revised MY GARB PRD as the authority for:
+
+- MVP features.
+- User roles.
+- Permissions.
+- Request and order lifecycle.
+- Required fields.
+- Acceptance criteria.
+
+Use compatible Figma exports as the authority for the intended visual presentation.
+
+A design containing an excluded feature does not authorize that feature.
+
+Preserve compatible styling while explicitly adapting conflicting controls and copy.
+
+## Supplied Design Files
+
+Earlier archive: BUTTON _ PRODUCT CARD.zip
+
+- SIGNUP HOME SCREEN.png
+- Sign Up.png
+- Login.png
+- Home page fidelity.png
+- Message.png
+
+Additional archive: BUTTON _ PRODUCT CARD (1).zip
+
+- Delivery status.png
+- Tracking History.png
+- Tracking map.png
+- Failed payment.png
+- Successful payment.png
+- Successful payment-1.png
+- Add PAYMENT METHOD.png
+- Payment method.png
+- Checkout.png
+- Add to Cart.png
+- Add Vendor.png
+- Chat Typing.png
+- Chats.png
+
+Before implementing a referenced screen, open the actual image.
+
+If a reference image is unavailable in the repository or session, report the missing file. Do not claim a visual match based only on its filename.
+
+## Shared Visual Requirements
+
+Use the supplied green visual system consistently.
+
+These colors were sampled from exported screenshots; they are not verified editable Figma variables.
+
+| Purpose | Color |
+| --- | --- |
+| Main dark-green background | #1C4F3C |
+| Medium-green headers and surfaces | #3F8E6F |
+| Light-green panels and accents | #79BE9E |
+| Primary action buttons | #1E9E6A |
+| Deep neutral-green surfaces | #2C3A33 |
+| Main text on dark backgrounds | #FFFFFF |
+
+Requirements:
+
+- Match compatible references closely in color, typography, spacing, alignment, imagery, controls, and rounded surfaces.
+- Check text contrast, especially on lighter-green panels.
+- Use the reference’s outlined or filled field treatment where appropriate.
+- Preserve circular avatars and distinct incoming/outgoing message bubbles.
+- Maintain appropriate image proportions.
+- Do not substitute an unrelated dashboard theme.
+- Do not render complete screenshots as the application interface.
+- Use separately supplied images, logos, icons, and fonts when available.
+- Identify missing assets or fonts rather than claiming exact fidelity.
+
+Preserve PHASIONABLE wherever it appears in supplied Figma designs, including the Milestone 03 screens. Do not replace it with MY GARB on those screens. This correction overrides earlier visible-branding replacement instructions.
+
+Use MY GARB as the project name in documentation.
+
+Final branding remains an open decision.
+
+## Responsive Requirements
+
+- Build mobile-first.
+- Compare referenced screens at their source mobile width.
+- Test at 360 px, 768 px, and 1280 px.
+- Avoid horizontal scrolling and content covered by fixed navigation.
+- Use readable forms and grids on tablet and desktop.
+- Do not simply stretch a phone screenshot.
+- Maintain keyboard access, visible focus, persistent labels, and actionable field errors.
+- Aim for the PRD’s proposed 44 × 44 px touch targets.
+- Treat tablet/desktop arrangements as responsive adaptations because dedicated designs were not supplied.
+
+## MVP Navigation
+
+Use labeled navigation for:
+
+- Discover.
+- Requests and Orders.
+- Messages.
+- Profile.
+
+Use a separate administrator layout.
+
+Do not copy the original cart, favorites, or social-vendor navigation.
+
+Show logout only during an active demo session.
+
+## Complete Screen Mapping
+
+| Design | Milestone | Implementation instruction |
+| --- | --- | --- |
+| SIGNUP HOME SCREEN.png | 03 | Match the photo-led welcome composition, login link, browsing button, and sign-up link. Preserve PHASIONABLE and use appropriate discovery wording. |
+| Sign Up.png | 03 | Match the green photo overlay, field treatment, and button layout. Use the proposed email/password baseline and customer/designer role selection. Remove phone sign-in, cart, and guest logout. |
+| Login.png | 03 | Match the authentication composition. Include password visibility, recovery, and sign-up navigation. Use email rather than phone/email. Remove cart and guest logout. |
+| Home page fidelity.png | 06 | Adapt the green header, search, filters, category presentation, and image cards to approved designer and portfolio discovery. Remove discounts, Flash Sale, purchase actions, cart, favorites, and unapproved categories. |
+| Message.png | 10 | Match conversation search, avatars, previews, timestamps, unread badges, and green surfaces. Use MVP navigation and participant-linked conversations. |
+| Add Vendor.png | 06 | Reuse designer-result row styling. Replace mutual friends with relevant specialization/location. Replace Add with View designer or request navigation. Do not build a vendor network or following feature. |
+| Add to Cart.png | 05/06, 08, 15 | Use photography and descriptive layout for portfolio viewing, measurement-strip styling for summaries only, and rating presentation for eligible reviews. Remove purchase price, stock selectors, cart quantity, and Add to Cart. Use Request custom outfit where appropriate. |
+| Checkout.png | No cart milestone | Exclude the cart and checkout workflow. Thumbnail-summary row styling may be reused in legitimate request/specification/order summaries. |
+| Payment method.png | No payment milestone | Exclude payment selection, provider logos, shipping fees, and payment totals. Generic selection-row styling may be reused for legitimate forms. |
+| Add PAYMENT METHOD.png | No payment milestone | Exclude card-entry and payment storage. Generic labeled-input styling may be reused without card number, expiry, CVV, or banking fields. |
+| Failed payment.png | Styling reference only | Reuse non-payment error composition where suitable. Use relevant error copy, preserve entered data, and provide appropriate retry actions. |
+| Successful payment.png | Styling reference for 07/11/15 | Reuse confirmation composition for Request submitted, Specification confirmed, or Order completed. Do not show paid status, receipts, sharing, courier tracking, or a five-day delivery promise. |
+| Successful payment-1.png | No feature mapping | This export is a plain green panel with no meaningful controls or text. Do not infer another workflow. |
+| Delivery status.png | 12 | Adapt header, order-ID panel, and timeline styling to production progress. Remove courier locations, map, parcel pickup, estimated courier arrival, and package tracking. |
+| Tracking History.png | 12 | Adapt cards to custom-order history with order summaries, agreed dates, and production states. Remove courier routes, parcel weight, shipping price, and courier Delivered semantics. |
+| Tracking map.png | Excluded | Do not implement maps, GPS, courier identity, distance, courier ratings, agent calls, or live tracking. Generic panel/button styling may be reused only. |
+| Chats.png | 10 | Match conversation header, bubbles, reference-image messages, timestamps, and composer. Remove calls, video, voice recording, last-seen claims, and undefined actions. |
+| Chat Typing.png | 10 | Use as the focused-composer reference. Test with the device’s native keyboard. Do not draw a custom keyboard or add live typing/presence features. |
+
+## Milestone-Specific Visual Instructions
+
+### Milestone 01 — Shared Styling
+
+Establish the shared green design tokens and reusable controls.
+
+Keep the component demonstration development-only.
+
+Do not introduce excluded workflows merely to demonstrate their styling.
+
+### Milestone 02 — Services and Fixtures
+
+Keep scenario/reset controls outside normal product navigation.
+
+Do not add payment, cart, courier, or social-network service groups because they appear in the exports.
+
+### Milestone 03 — Welcome and Authentication
+
+Use the three welcome/authentication exports directly.
+
+Match their photo-led composition, green overlays, light text, fields, buttons, and spacing.
+
+Preserve PHASIONABLE wherever it appears in the Figma designs and use the proposed email/password baseline. MY GARB remains the project name in documentation.
+
+Report missing photos, fonts, or assets.
+
+### Milestone 04 — Profiles
+
+No complete profile-edit design was supplied.
+
+Use consistent green headers, panels, and labeled fields.
+
+Do not copy banking fields from the payment-method design.
+
+### Milestone 05 — Portfolio Management
+
+No complete portfolio-editor design was supplied.
+
+Use the shared green form system.
+
+Use Add to Cart.png only for compatible portfolio-viewing composition, without purchase controls.
+
+### Milestone 06 — Discovery
+
+Use Home page fidelity.png, Add Vendor.png, and Add to Cart.png for their mapped purposes.
+
+Preserve compatible composition while replacing sales, social connections, and cart actions with designer/work discovery.
+
+### Milestone 07 — Requests
+
+No direct request-form design was supplied.
+
+Use green fields, panels, and clear summaries.
+
+Reuse confirmation/error styling only with request-related copy.
+
+No cart, payment, receipt, shipping fee, or fixed delivery promise.
+
+### Milestone 08 — Measurements
+
+Use the measurement strip as a summary reference only.
+
+Do not copy screenshot measurements as defaults or treat them as an approved measurement schema.
+
+Guided measurement forms and instructions still require design review.
+
+### Milestone 09 — Designer Triage
+
+No complete triage/dashboard design was supplied.
+
+Use consistent green lists, cards, and labeled statuses.
+
+Do not add social-vendor or courier behavior.
+
+### Milestone 10 — Messaging
+
+Use Message.png, Chats.png, and Chat Typing.png.
+
+Match list rows, avatars, bubbles, timestamps, image messages, and composer placement.
+
+Support text and validated reference images.
+
+Do not add calls, video, voice notes, last seen, live typing, a custom keyboard, or arbitrary social conversations.
+
+### Milestone 11 — Specifications
+
+No complete specification/version-confirmation design was supplied.
+
+Use green forms and summary cards.
+
+Confirmation may reuse the success composition with Specification confirmed wording.
+
+Order creation must follow mutual confirmation, never payment.
+
+### Milestone 12 — Orders
+
+Adapt Delivery status.png and Tracking History.png.
+
+Use:
+
+Confirmed → In production → Ready → Handed over.
+
+Customer completion is implemented in milestone 15.
+
+Show actual fictional events, actors, timestamps, and agreed dates.
+
+Do not add courier maps, shipping prices, parcel weights, agent details, or estimated courier arrival.
+
+### Milestone 13 — Changes and Cancellation
+
+Extend the green order surfaces with current-versus-proposed details and explicit decisions.
+
+Do not use payment/delivery success as proof that a change was accepted.
+
+### Milestone 14 — Issues
+
+Use shared green forms and status panels.
+
+No compensation, refund, call, or voice workflow.
+
+### Milestone 15 — Completion and Reviews
+
+Use an accessible rating input.
+
+Calculate rating/count from eligible published review fixtures rather than copying screenshot numbers.
+
+Completion confirmation must not imply payment, receipts, courier tracking, or fixed delivery dates.
+
+### Milestone 16 — Notifications
+
+Use consistent green panels and rows.
+
+The delivery-status bell is a styling cue only.
+
+Build the existing in-app event requirements without push, financial, or courier features.
+
+### Milestone 17 — Admin Approval and Moderation
+
+Use a separate labeled admin layout with shared green styling.
+
+Do not copy Add vendor or mutual-friends behavior into approval workflows.
+
+### Milestone 18 — Admin Issue Resolution
+
+Use green admin panels, explicit resolution details, and scoped record access.
+
+Do not introduce financial actions, courier management, or calls.
+
+### Milestone 19 — Final Verification
+
+Compare all compatible/adapted screens with their mapped exports.
+
+Check responsive behavior, intentional MVP changes, missing assets, and the absence of excluded controls.
+
+Do not claim exact fidelity or live-pilot readiness without evidence.
+
+## Conflicts to Record
+
+- Payment/cart designs contain dollar prices; tracking history contains an Rs. amount. The PRD uses agreed custom-order prices in NGN.
+- Payment method displays $20 purchase plus $10 shipping but a $40 subtotal.
+- Checkout shows three $40.01 items but a $300.50 total.
+- Do not reproduce these inconsistent commerce calculations.
+- The portfolio reference shows three stars alongside a 4.1 rating. Derive ratings from eligible published reviews.
+- The payment-success design promises delivery within five working days. That promise is not approved.
+- Handed over is a manual outfit-transfer record, not verified courier delivery.
+- Completed requires customer confirmation and no unresolved issue.
+- Phone sign-in, social vendors, calls, voice notes, live presence, receipts, and sharing conflict with or exceed current requirements. Preserve PHASIONABLE branding wherever it appears in the supplied Figma designs.
+
+## Designs Still Missing or Incomplete
+
+Complete designs have not been supplied for:
+
+- Customer/designer profile editing.
+- Portfolio editing.
+- Request and draft forms.
+- Guided measurements.
+- Designer triage/dashboard.
+- Structured specification and version confirmation.
+- Change and cancellation panels.
+- Issue reporting.
+- Review entry.
+- Notification lists.
+- Administrator workflows.
+- Recovery and verification states.
+
+Use the shared green system, follow the existing milestone requirements, and flag these screens for review.
+
+Do not claim a partial reference is a complete design for another workflow.
+
+## Visual Acceptance and Testing
+
+For each milestone that builds product screens:
+
+1. Open the mapped reference images before implementation.
+2. Identify the referenced filenames in the implementation report.
+3. Compare the implementation with the source at its mobile width and at 360 px.
+4. Check colors, typography, hierarchy, imagery, spacing, alignment, controls, and rounded surfaces.
+5. Verify responsive behavior at 768 px and 1280 px.
+6. Verify keyboard access, visible focus, labels, contrast, and no covered content.
+7. Confirm excluded controls and misleading production claims are absent.
+8. Explain intentional MVP adaptations.
+9. Identify missing assets/fonts and unperformed visual checks.
+10. Run the existing milestone’s functional acceptance checks and production build.
+11. Mark the milestone complete only after required checks pass; otherwise report remaining work.
+
+## Required Codex Completion Report
+
+After implementing the requested milestone, report:
+
+- The milestone implemented.
+- Files changed.
+- Reference images used.
+- Functional checks performed.
+- Visual/responsive checks performed.
+- Intentional MVP adaptations.
+- Mock functionality.
+- Missing assets or requirements.
+- Remaining failures or unverified checks.
+- Beginner-friendly steps to run and manually test the result.
+
+Stop after the requested milestone.
+
+Do not automatically implement the next milestone.
