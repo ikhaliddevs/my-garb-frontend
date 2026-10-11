@@ -27,3 +27,13 @@
 - Exact garment taxonomy, measurement schema, profile-required fields, availability vocabulary, file limits, and moderation outcomes remain provisional demo assumptions.
 - Commercial terms are represented only as fictional labels. The demo does not simulate checkout, payments, escrow, refunds, courier tracking, or delivery guarantees.
 - Request withdrawal is limited to explicit submitted/discussing demo states until the missing awaiting-confirmation withdrawal rule is resolved.
+
+## Milestone 04
+
+- No complete profile-edit design was supplied. The profile screen uses the existing green panels, persistent labels, and responsive shell as a proposed layout for review.
+- Customer location is implemented only as the existing fictional `city`/demo-area label. Full address, phone number, geolocation, and contact-preference vocabulary remain unresolved and are not collected.
+- Designer required fields are provisional: business name, service location, at least one specialization, and availability. The exact pilot geography, category taxonomy, and availability vocabulary remain unresolved.
+- Designer approval/publication status is displayed but cannot be edited by designers. Administrative approval, suspension changes, and moderation workflows remain later milestones.
+- Profile images are not implemented because Milestone 04 does not require them and upload/file rules are absent. Secure upload, file limits, removal policy, failed media behavior, and storage retention remain unresolved.
+- The private measurement-profile entry point is shown as a blocked placeholder only; measurement editing begins in a later milestone.
+- Mock profile ownership checks are a frontend demonstration only. A real backend must enforce private profile access and editable-field rules.

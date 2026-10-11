@@ -77,7 +77,7 @@ function Button({ children, className = '', variant = 'primary', ...props }) {
   )
 }
 
-function FormField({ id, label, error, helpText, ...props }) {
+function FormField({ id, label, error, helpText, inputRef, ...props }) {
   const errorId = error ? `${id}-error` : undefined
   const helpId = helpText ? `${id}-help` : undefined
   const describedBy = [helpId, errorId].filter(Boolean).join(' ') || undefined
@@ -89,6 +89,7 @@ function FormField({ id, label, error, helpText, ...props }) {
       </label>
       <input
         id={id}
+        ref={inputRef}
         className={`form-control ${error ? 'is-invalid' : ''}`}
         aria-describedby={describedBy}
         aria-invalid={error ? 'true' : undefined}
@@ -125,6 +126,38 @@ function SelectField({ id, label, error, children, ...props }) {
       >
         {children}
       </select>
+      {error ? (
+        <div className="invalid-feedback" id={errorId}>
+          {error}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function TextAreaField({ id, label, error, helpText, ...props }) {
+  const errorId = error ? `${id}-error` : undefined
+  const helpId = helpText ? `${id}-help` : undefined
+  const describedBy = [helpId, errorId].filter(Boolean).join(' ') || undefined
+
+  return (
+    <div className="mb-3">
+      <label className="form-label" htmlFor={id}>
+        {label}
+      </label>
+      <textarea
+        id={id}
+        className={`form-control ${error ? 'is-invalid' : ''}`}
+        aria-describedby={describedBy}
+        aria-invalid={error ? 'true' : undefined}
+        rows="5"
+        {...props}
+      />
+      {helpText ? (
+        <div className="form-text" id={helpId}>
+          {helpText}
+        </div>
+      ) : null}
       {error ? (
         <div className="invalid-feedback" id={errorId}>
           {error}
@@ -311,6 +344,18 @@ function App() {
 
   if (route.type === 'shell' && !route.development && route.role !== 'public') {
     if (sessionState.status !== 'ready') return <div className="auth-page"><main className="placeholder-content">{sessionState.status === 'loading' ? <Spinner label="Restoring fictional session" /> : <ErrorState title="Demo session unavailable" onRetry={() => setSessionRevision((value) => value + 1)}>{sessionState.error}</ErrorState>}</main><DemoNotice /></div>
+    if (route.section.path === '/profile' && ['customer', 'designer'].includes(route.role)) {
+      return (
+        <ProfilePage
+          key={`${route.role}-${sessionState.account?.id || 'guest'}-${demoSettings.scenario}-${demoSettings.adapterMode}`}
+          role={route.role}
+          services={sessionServices}
+          session={sessionState.account}
+          onSessionChange={onSessionChange}
+          navigate={navigateTo}
+        />
+      )
+    }
     return <GuardedPlaceholder role={route.role} services={sessionServices} session={sessionState.account} onSessionChange={onSessionChange} navigate={navigateTo} />
   }
 
@@ -554,6 +599,553 @@ function NavigationLinks({ activePath, onNavigate, prefix = '' }) {
       })}
     </ul>
   )
+}
+
+const profileConfig = {
+  contactPreferences: [
+    { value: '', label: 'Select a provisional demo preference' },
+    { value: 'in-app message', label: 'In-app message' },
+    { value: 'email for demo notices', label: 'Email for demo notices' },
+  ],
+  availabilityOptions: [
+    { value: '', label: 'Select provisional demo availability' },
+    { value: 'accepting demo requests', label: 'Accepting demo requests' },
+    { value: 'reviewing availability', label: 'Reviewing availability' },
+    { value: 'not accepting new work', label: 'Not accepting new work' },
+  ],
+  specializationOptions: ['aso ebi', 'bridal reception', 'agbada', 'senator wear', 'kaftan', 'traditional wrapper', 'occasion blouse'],
+  designerRequiredFields: ['businessName', 'serviceLocation', 'specializations', 'availability'],
+}
+
+function ProfilePage({ role, session, services, onSessionChange, navigate }) {
+  const permitted = session?.role === role
+  const [loadState, setLoadState] = useState({ status: 'loading', profile: null, error: null })
+  const [formValues, setFormValues] = useState(null)
+  const [editing, setEditing] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState({})
+  const [feedback, setFeedback] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const pendingSave = useRef(false)
+  const firstFieldRef = useRef(null)
+
+  const isDirty = Boolean(formValues && loadState.profile && JSON.stringify(toProfileForm(loadState.profile)) !== JSON.stringify(formValues))
+
+  const loadProfile = () => {
+    if (!permitted) return
+    setLoadState({ status: 'loading', profile: null, error: null })
+    setFeedback(null)
+    services.profiles.getOwnProfile().then((profile) => {
+      if (!profile) {
+        setLoadState({ status: 'missing', profile: null, error: null })
+        setFormValues(null)
+        return
+      }
+      setLoadState({ status: 'ready', profile, error: null })
+      setFormValues(toProfileForm(profile))
+      setEditing(false)
+      setFieldErrors({})
+    }).catch((error) => {
+      if (error.code === 'not_found') setLoadState({ status: 'missing', profile: null, error: null })
+      else setLoadState({ status: 'error', profile: null, error })
+    })
+  }
+
+  useEffect(() => {
+    if (!permitted) return undefined
+    let active = true
+    services.profiles.getOwnProfile().then((profile) => {
+      if (!active) return
+      if (!profile) {
+        setLoadState({ status: 'missing', profile: null, error: null })
+        setFormValues(null)
+        return
+      }
+      setLoadState({ status: 'ready', profile, error: null })
+      setFormValues(toProfileForm(profile))
+      setEditing(false)
+      setFieldErrors({})
+    }).catch((error) => {
+      if (!active) return
+      if (error.code === 'not_found') setLoadState({ status: 'missing', profile: null, error: null })
+      else setLoadState({ status: 'error', profile: null, error })
+    })
+    return () => { active = false }
+  }, [permitted, services])
+
+  useEffect(() => {
+    if (!isDirty) return undefined
+    const warn = (event) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [isDirty])
+
+  const updateField = (key, value) => {
+    setFormValues((current) => ({ ...current, [key]: value }))
+    setFieldErrors((current) => ({ ...current, [key]: undefined }))
+    setFeedback(null)
+  }
+
+  const toggleSpecialization = (value) => {
+    setFormValues((current) => {
+      const selected = new Set(current.specializations || [])
+      if (selected.has(value)) selected.delete(value)
+      else selected.add(value)
+      return { ...current, specializations: Array.from(selected) }
+    })
+    setFieldErrors((current) => ({ ...current, specializations: undefined }))
+    setFeedback(null)
+  }
+
+  const startEdit = () => {
+    setEditing(true)
+    setFeedback(null)
+    requestAnimationFrame(() => firstFieldRef.current?.focus())
+  }
+
+  const cancelEdit = () => {
+    setFormValues(toProfileForm(loadState.profile))
+    setFieldErrors({})
+    setFeedback({ type: 'info', message: 'Unsaved profile changes were discarded.' })
+    setEditing(false)
+  }
+
+  const saveProfile = async (event) => {
+    event.preventDefault()
+    if (pendingSave.current || !formValues) return
+    const errors = validateProfile(role, formValues)
+    setFieldErrors(errors)
+    if (Object.keys(errors).length) {
+      const first = Object.keys(errors)[0]
+      document.getElementById(`profile-${first}`)?.focus()
+      return
+    }
+    pendingSave.current = true
+    setSaving(true)
+    setFeedback(null)
+    try {
+      const saved = await services.profiles.updateOwnProfile(toProfilePatch(role, formValues))
+      setLoadState({ status: 'ready', profile: saved, error: null })
+      setFormValues(toProfileForm(saved))
+      setEditing(false)
+      setFeedback({ type: 'success', message: 'Demo profile saved locally. Refreshing this browser keeps the fictional change until demo reset.' })
+    } catch (error) {
+      setFieldErrors(normalizeFieldErrors(error.details?.fieldErrors))
+      setFeedback({ type: 'error', message: error.message || 'Temporary demo save failure. Retry without losing entered values.' })
+    } finally {
+      pendingSave.current = false
+      setSaving(false)
+    }
+  }
+
+  const guardedNavigate = (path) => {
+    if (isDirty && !window.confirm('Discard unsaved profile changes and leave this form?')) return
+    navigate(path)
+  }
+
+  const logout = async () => {
+    if (isDirty && !window.confirm('Discard unsaved profile changes and log out?')) return
+    await services.accounts.logout()
+    onSessionChange(null)
+    navigate('/')
+  }
+
+  return (
+    <div className="auth-page profile-page">
+      <AuthHeader navigate={guardedNavigate} session={session} onLogout={logout} />
+      <main className="profile-shell">
+        <DemoNotice />
+        <ProfileNav role={role} activePath={`/${role}/profile`} navigate={guardedNavigate} />
+        {!session ? (
+          <ProfileGate title="Log in to view your profile" destination={`/${role}/profile`} navigate={navigate} actionLabel="Log in" />
+        ) : !permitted ? (
+          <ProfileGate title="This profile area belongs to another role" destination={`/${session.role}`} navigate={navigate}>
+            Fictional route guards are demonstrations only. Open the workspace for the active demo role.
+          </ProfileGate>
+        ) : loadState.status === 'loading' ? (
+          <section className="profile-panel">
+            <Spinner label="Loading fictional profile" />
+          </section>
+        ) : loadState.status === 'error' ? (
+          <ErrorState title="Profile unavailable" onRetry={loadProfile}>
+            {loadState.error?.message || 'The demo profile could not be loaded.'}
+          </ErrorState>
+        ) : loadState.status === 'missing' ? (
+          <EmptyState title="No demo profile record" action={<Button onClick={loadProfile}>Retry</Button>}>
+            This demo does not create profile records automatically. Reset demo data or choose another fictional identity.
+          </EmptyState>
+        ) : (
+          <ProfileWorkspace
+            editing={editing}
+            feedback={feedback}
+            fieldErrors={fieldErrors}
+            firstFieldRef={firstFieldRef}
+            formValues={formValues}
+            isDirty={isDirty}
+            onCancel={cancelEdit}
+            onSave={saveProfile}
+            onStartEdit={startEdit}
+            onToggleSpecialization={toggleSpecialization}
+            onUpdateField={updateField}
+            profile={loadState.profile}
+            role={role}
+            saving={saving}
+            session={session}
+          />
+        )}
+      </main>
+    </div>
+  )
+}
+
+function ProfileNav({ role, activePath, navigate }) {
+  const items = [
+    { label: 'Discover', path: `/${role}` },
+    { label: 'Requests and Orders', path: `/${role}/requests-orders` },
+    { label: 'Messages', path: `/${role}/messages` },
+    { label: 'Profile', path: `/${role}/profile` },
+  ]
+  return (
+    <nav className="profile-nav" aria-label={`${role} workspace navigation`}>
+      {items.map((item) => (
+        <a
+          className={item.path === activePath ? 'active' : ''}
+          href={item.path}
+          key={item.path}
+          onClick={(event) => {
+            event.preventDefault()
+            navigate(item.path)
+          }}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+function ProfileGate({ title, destination, navigate, actionLabel = 'Continue', children }) {
+  return (
+    <section className="profile-panel">
+      <h1>{title}</h1>
+      <p>{children || 'Fictional sessions and frontend route guards are demonstrations, not production security.'}</p>
+      <Button onClick={() => navigate(destination.startsWith('/login') ? destination : `/login?returnTo=${encodeURIComponent(destination)}`)}>
+        {actionLabel}
+      </Button>
+    </section>
+  )
+}
+
+function ProfileWorkspace({
+  editing,
+  feedback,
+  fieldErrors,
+  firstFieldRef,
+  formValues,
+  isDirty,
+  onCancel,
+  onSave,
+  onStartEdit,
+  onToggleSpecialization,
+  onUpdateField,
+  profile,
+  role,
+  saving,
+  session,
+}) {
+  const designerComplete = role === 'designer' ? isDesignerProfileComplete(profile) : true
+
+  return (
+    <div className="profile-grid">
+      <section className="profile-panel profile-overview" aria-labelledby="profile-heading">
+        <div className="profile-heading-row">
+          <div className="avatar-fallback" aria-hidden="true">{initials(profileDisplayName(profile, session))}</div>
+          <div>
+            <p className="eyebrow">{role === 'designer' ? 'Designer profile' : 'Customer profile'}</p>
+            <h1 id="profile-heading">{profileDisplayName(profile, session)}</h1>
+            <p className="profile-muted">Private account details stay separate from editable profile information.</p>
+          </div>
+        </div>
+
+        {role === 'designer' ? <ApprovalStatusPanel profile={profile} complete={designerComplete} /> : null}
+
+        <div className="profile-facts" aria-label="Current saved profile values">
+          {role === 'customer' ? (
+            <>
+              <ProfileFact label="Name" value={profile.name} />
+              <ProfileFact label="Demo location" value={profile.city} />
+              <ProfileFact label="Contact preference" value={profile.contactPreference} />
+            </>
+          ) : (
+            <>
+              <ProfileFact label="Business name" value={profile.businessName} />
+              <ProfileFact label="Service location" value={profile.serviceLocation} />
+              <ProfileFact label="Availability" value={profile.availability} />
+              <ProfileFact label="Specializations" value={(profile.specializations || []).join(', ')} />
+              <ProfileFact label="Bio" value={profile.bio} />
+            </>
+          )}
+        </div>
+      </section>
+
+      <section className="profile-panel" aria-labelledby="profile-form-heading">
+        <div className="profile-form-header">
+          <div>
+            <p className="eyebrow">Demo mode</p>
+            <h2 id="profile-form-heading">{editing ? 'Edit saved profile' : 'Saved profile details'}</h2>
+          </div>
+          {!editing ? <Button onClick={onStartEdit}>Edit profile</Button> : null}
+        </div>
+
+        {feedback ? <AppAlert variant={feedback.type === 'error' ? 'danger' : feedback.type === 'success' ? 'success' : 'info'}>{feedback.message}</AppAlert> : null}
+
+        <form noValidate onSubmit={onSave} aria-busy={saving}>
+          {role === 'customer' ? (
+            <CustomerProfileFields disabled={!editing || saving} errors={fieldErrors} firstFieldRef={firstFieldRef} values={formValues} onUpdate={onUpdateField} />
+          ) : (
+            <DesignerProfileFields
+              disabled={!editing || saving}
+              errors={fieldErrors}
+              firstFieldRef={firstFieldRef}
+              values={formValues}
+              onToggleSpecialization={onToggleSpecialization}
+              onUpdate={onUpdateField}
+            />
+          )}
+
+          <section className="account-separation" aria-labelledby="account-separation-title">
+            <h3 id="account-separation-title">Account credentials</h3>
+            <p>{session.email}</p>
+            <p>Password, verification, approval, and account role changes are outside this profile form.</p>
+          </section>
+
+          {role === 'customer' ? (
+            <section className="measurement-entry" aria-labelledby="measurement-entry-title">
+              <h3 id="measurement-entry-title">Private measurement profile</h3>
+              <p>Measurement editing starts in a later milestone. This entry point is shown only as a blocked demo placeholder.</p>
+              <Button variant="secondary" disabled>Measurements not implemented yet</Button>
+            </section>
+          ) : null}
+
+          {editing ? (
+            <div className="profile-actions">
+              <Button type="submit" disabled={saving}>
+                {saving ? <><span className="spinner-border spinner-border-sm" aria-hidden="true" /> Saving...</> : 'Save profile'}
+              </Button>
+              <Button variant="secondary" onClick={onCancel} disabled={saving} type="button">
+                Cancel
+              </Button>
+              {isDirty ? <span className="profile-dirty" role="status">Unsaved changes</span> : null}
+            </div>
+          ) : null}
+        </form>
+      </section>
+    </div>
+  )
+}
+
+function CustomerProfileFields({ disabled, errors, firstFieldRef, values, onUpdate }) {
+  return (
+    <>
+      <FormField
+        id="profile-name"
+        label="Name"
+        inputRef={firstFieldRef}
+        value={values.name}
+        disabled={disabled}
+        error={errors.name}
+        onChange={(event) => onUpdate('name', event.target.value)}
+      />
+      <FormField
+        id="profile-city"
+        label="Demo location"
+        value={values.city}
+        disabled={disabled}
+        error={errors.city}
+        helpText="Provisional location label only. No full address or geolocation is collected."
+        onChange={(event) => onUpdate('city', event.target.value)}
+      />
+      <SelectField
+        id="profile-contactPreference"
+        label="Contact preference"
+        value={values.contactPreference}
+        disabled={disabled}
+        error={errors.contactPreference}
+        onChange={(event) => onUpdate('contactPreference', event.target.value)}
+      >
+        {profileConfig.contactPreferences.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+      </SelectField>
+    </>
+  )
+}
+
+function DesignerProfileFields({ disabled, errors, firstFieldRef, values, onToggleSpecialization, onUpdate }) {
+  return (
+    <>
+      <FormField
+        id="profile-businessName"
+        label="Business name"
+        inputRef={firstFieldRef}
+        value={values.businessName}
+        disabled={disabled}
+        error={errors.businessName}
+        onChange={(event) => onUpdate('businessName', event.target.value)}
+      />
+      <FormField
+        id="profile-serviceLocation"
+        label="Service location"
+        value={values.serviceLocation}
+        disabled={disabled}
+        error={errors.serviceLocation}
+        helpText="Provisional demo location label only."
+        onChange={(event) => onUpdate('serviceLocation', event.target.value)}
+      />
+      <fieldset className="profile-fieldset" aria-describedby={errors.specializations ? 'profile-specializations-error' : 'profile-specializations-help'} disabled={disabled}>
+        <legend>Specializations</legend>
+        <p id="profile-specializations-help">Provisional demo taxonomy pending pilot approval.</p>
+        <div className="specialization-grid">
+          {profileConfig.specializationOptions.map((option) => (
+            <label key={option}>
+              <input
+                type="checkbox"
+                checked={(values.specializations || []).includes(option)}
+                onChange={() => onToggleSpecialization(option)}
+              />
+              <span>{option}</span>
+            </label>
+          ))}
+        </div>
+        {errors.specializations ? <p className="field-error" id="profile-specializations-error">{errors.specializations}</p> : null}
+      </fieldset>
+      <TextAreaField
+        id="profile-bio"
+        label="Bio"
+        value={values.bio}
+        disabled={disabled}
+        error={errors.bio}
+        helpText="Optional public-facing studio summary for later discovery screens."
+        onChange={(event) => onUpdate('bio', event.target.value)}
+      />
+      <SelectField
+        id="profile-availability"
+        label="Availability"
+        value={values.availability}
+        disabled={disabled}
+        error={errors.availability}
+        onChange={(event) => onUpdate('availability', event.target.value)}
+      >
+        {profileConfig.availabilityOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+      </SelectField>
+    </>
+  )
+}
+
+function ApprovalStatusPanel({ profile, complete }) {
+  const status = profile.publicationStatus || 'pending'
+  const displayStatus = !complete && status !== 'suspended' ? 'incomplete' : status
+  const tone = displayStatus === 'approved' ? 'success' : displayStatus === 'suspended' ? 'danger' : 'warning'
+  const message = {
+    approved: complete ? 'Approved for later public discovery. Designers cannot approve themselves or edit this status.' : 'Approved record has missing required demo fields; publication remains blocked until completed.',
+    pending: 'Pending administrator review. Public discovery stays unavailable until a later admin milestone approves it.',
+    suspended: 'Suspended designers cannot accept new work in the demo, but existing-record access is retained.',
+    incomplete: 'Required profile information is incomplete, so publication remains blocked.',
+  }[displayStatus] || 'Publication state is unresolved in the demo configuration.'
+
+  return (
+    <section className="approval-panel" aria-labelledby="approval-status-title">
+      <div>
+        <h2 id="approval-status-title">Approval status</h2>
+        <p>{message}</p>
+      </div>
+      <StatusBadge tone={tone}>{displayStatus === 'approved' ? 'Approved' : displayStatus}</StatusBadge>
+    </section>
+  )
+}
+
+function ProfileFact({ label, value }) {
+  return (
+    <div>
+      <span>{label}</span>
+      <strong>{value || 'Not provided'}</strong>
+    </div>
+  )
+}
+
+function toProfileForm(profile) {
+  if (profile.role === 'designer') {
+    return {
+      businessName: profile.businessName || '',
+      serviceLocation: profile.serviceLocation || '',
+      specializations: Array.isArray(profile.specializations) ? profile.specializations : [],
+      bio: profile.bio || '',
+      availability: profile.availability || '',
+    }
+  }
+  return {
+    name: profile.name || '',
+    city: profile.city || '',
+    contactPreference: profile.contactPreference || '',
+  }
+}
+
+function toProfilePatch(role, values) {
+  if (role === 'designer') {
+    return {
+      businessName: values.businessName.trim(),
+      serviceLocation: values.serviceLocation.trim(),
+      specializations: values.specializations,
+      bio: values.bio.trim(),
+      availability: values.availability,
+    }
+  }
+  return {
+    name: values.name.trim(),
+    city: values.city.trim(),
+    contactPreference: values.contactPreference,
+  }
+}
+
+function validateProfile(role, values) {
+  const errors = {}
+  if (role === 'customer') {
+    if (!values.name.trim()) errors.name = 'Enter the fictional customer name.'
+    if (values.name.trim().length > 80) errors.name = 'Use 80 characters or fewer.'
+    if (values.city.trim().length > 80) errors.city = 'Use 80 characters or fewer.'
+    if (!values.contactPreference) errors.contactPreference = 'Choose a provisional contact preference.'
+    return errors
+  }
+  if (!values.businessName.trim()) errors.businessName = 'Enter the fictional business name.'
+  if (values.businessName.trim().length > 100) errors.businessName = 'Use 100 characters or fewer.'
+  if (!values.serviceLocation.trim()) errors.serviceLocation = 'Enter a provisional service location.'
+  if (values.serviceLocation.trim().length > 100) errors.serviceLocation = 'Use 100 characters or fewer.'
+  if (!values.specializations?.length) errors.specializations = 'Select at least one provisional specialization.'
+  if (values.bio.trim().length > 400) errors.bio = 'Use 400 characters or fewer.'
+  if (!values.availability) errors.availability = 'Choose a provisional availability value.'
+  return errors
+}
+
+function normalizeFieldErrors(errors = {}) {
+  if (!errors.title) return errors
+  return { ...errors, title: undefined, name: errors.title }
+}
+
+function isDesignerProfileComplete(profile) {
+  return Boolean(
+    profile.businessName?.trim()
+    && profile.serviceLocation?.trim()
+    && profile.specializations?.length
+    && profile.availability,
+  )
+}
+
+function profileDisplayName(profile, session) {
+  return profile.businessName || profile.name || session?.displayName || 'Demo profile'
+}
+
+function initials(name) {
+  return (name || 'DP').split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || 'DP'
 }
 
 function StateDemoPage({ demoSettings, onSettingsChange, services }) {

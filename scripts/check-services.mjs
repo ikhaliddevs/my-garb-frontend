@@ -18,7 +18,7 @@ let settings = { adapterMode: 'mock', scenario: 'normal', identityId: 'acct-cust
 let services = createServices(settings)
 
 const identities = await services.accounts.listDemoIdentities()
-assert.equal(identities.length, 6)
+assert.equal(identities.length, 7)
 
 const aminaRequests = await services.requests.listMine()
 assert(aminaRequests.every((request) => request.customerId === 'acct-customer-amina'))

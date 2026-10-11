@@ -54,6 +54,16 @@ Development-only operations: `simulateIdentity(identityId)` returns the selected
 
 Errors use existing `ServiceError` codes and optional `{fieldErrors}`. Required password only and no confirmation field are provisional, not production policy. This milestone does not specify real credentials, session expiry durations, email delivery, or verification gates.
 
+## Milestone 04 Profile Contracts
+
+`profiles.getOwnProfile()` returns the active fictional identity profile or rejects with `not_found`, `forbidden`, `temporary_failure`, or `backend_not_configured` depending on the selected adapter/scenario. Customer profile editing supports `name`, `city`, and `contactPreference`. Designer profile editing supports `businessName`, `serviceLocation`, `specializations`, `bio`, and `availability`.
+
+`profiles.updateOwnProfile(patch)` persists only the editable fields for the current profile role. It intentionally ignores account credentials, role, account ownership, designer approval/publication status, and other administrative fields. Designer approval status is read from the fictional designer record and displayed to the designer, but cannot be changed through the profile service or profile screen.
+
+`profiles.getProfile(profileId)` may read designer profiles for later public-use scenarios. Private customer profiles are readable only by their owner or the fictional administrator in the mock adapter. This is a frontend demonstration, not production authorization.
+
+Provisional demo options are used for contact preference, availability, service location labels, and designer specializations. Profile-image upload, file validation, secure storage, and public/private media policy are not implemented in this milestone.
+
 ## Backend Responsibilities (Unchanged)
 
 A production backend must provide real authentication, authorization, sessions, persistence, secure uploads, notification delivery, state-transition enforcement, audit records, atomic duplicate-submit handling, and stale-version protection. No backend URLs or endpoints are defined in this milestone.

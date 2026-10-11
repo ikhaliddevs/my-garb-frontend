@@ -10,6 +10,8 @@
     "check:auth": "node scripts/check-auth.mjs",
     "check:auth:browser": "node scripts/check-auth-browser.mjs",
     "check:brand:browser": "node scripts/check-brand-header.mjs",
+    "check:profiles": "node scripts/check-profiles.mjs",
+    "check:profiles:browser": "node scripts/check-profiles-browser.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

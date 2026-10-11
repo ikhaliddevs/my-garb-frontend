@@ -77,6 +77,26 @@ function saveOperation(store, operationId, result) {
   return null
 }
 
+const profilePatchAllowList = {
+  customer: ['name', 'contactPreference', 'city'],
+  designer: ['businessName', 'serviceLocation', 'specializations', 'bio', 'availability'],
+}
+
+function sanitizeProfilePatch(profile, patch = {}) {
+  const allowed = profilePatchAllowList[profile.role] || []
+  return Object.fromEntries(
+    Object.entries(patch).filter(([key]) => allowed.includes(key)),
+  )
+}
+
+function syncDesignerPublication(store, profile) {
+  if (profile.role !== 'designer') return profile
+  const designer = store.designers.find((item) => item.id === profile.designerId)
+  if (!designer) return profile
+  profile.publicationStatus = designer.status === 'approved' && designer.published ? 'approved' : designer.status
+  return profile
+}
+
 export function createMockAdapter(context) {
   const currentContext = () => normalizeContext(typeof context === 'function' ? context() : context)
 
@@ -97,7 +117,9 @@ export function createMockAdapter(context) {
         return respond(currentContext(), null, () => {
           const store = readDemoStore()
           const identity = getIdentity(store, currentContext().identityId)
-          return store.profiles.find((profile) => profile.accountId === identity.id)
+          const profile = store.profiles.find((item) => item.accountId === identity.id)
+          if (!profile) throw new ServiceError('not_found', 'Demo profile is unavailable.')
+          return syncDesignerPublication(store, profile)
         })
       },
       updateOwnProfile(patch) {
@@ -106,16 +128,23 @@ export function createMockAdapter(context) {
           const identity = getIdentity(store, currentContext().identityId)
           const index = store.profiles.findIndex((profile) => profile.accountId === identity.id)
           if (index < 0) throw new ServiceError('not_found', 'Demo profile is unavailable.')
-          store.profiles[index] = { ...store.profiles[index], ...patch, accountId: identity.id }
+          const safePatch = sanitizeProfilePatch(store.profiles[index], patch)
+          store.profiles[index] = { ...store.profiles[index], ...safePatch, accountId: identity.id }
+          syncDesignerPublication(store, store.profiles[index])
           writeDemoStore(store)
           return store.profiles[index]
         })
       },
       getProfile(profileId) {
         return respond(currentContext(), null, () => {
-          const profile = readDemoStore().profiles.find((item) => item.id === profileId)
+          const store = readDemoStore()
+          const identity = getIdentity(store, currentContext().identityId)
+          const profile = store.profiles.find((item) => item.id === profileId)
           if (!profile) throw new ServiceError('not_found', 'Demo profile was not found.')
-          return profile
+          if (identity.role !== 'admin' && profile.accountId !== identity.id && profile.role !== 'designer') {
+            throw new ServiceError('forbidden', 'This fictional identity cannot read another private customer profile.')
+          }
+          return syncDesignerPublication(store, profile)
         })
       },
     },

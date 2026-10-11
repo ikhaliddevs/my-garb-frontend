@@ -8,7 +8,24 @@ Status: Demo implementation verified. See `docs/milestone-03.md` for checks, pro
 - Promise-based account operations, fictional session restoration/logout, safe internal return paths, role guards, and development account simulations added.
 - Existing showcase preserved at `/dev`, `/dev/states`, and `/dev/services`; future workflows remain labeled placeholders.
 - Account/service checks, browser flows, keyboard checks, 402 x 874 comparisons, 360/768/1280 layouts, lint, and build passed. Exact fonts/monogram, asset licensing, direct PRD comparison, native mobile keyboard, and assistive technology remain unverified.
-- Milestone 04 and deployment not started.
+- Milestone 04 implemented locally and verified; deployment not started.
+
+## Milestone 04 - Customer and Designer Profiles
+
+Status: Implemented for review. Lint, service checks, browser profile flows, and production build pass.
+
+Completed:
+
+- Customer and designer `/profile` pages now read and save through the profile service layer.
+- Customer fields: name, demo location, and contact preference.
+- Designer fields: business name, service location, specializations, bio, and availability.
+- Designer approval status is displayed separately and cannot be edited by designers.
+- Edit, save, cancel, validation, loading, missing-record, session-unavailable, persistence, reset, and private-profile separation states are covered.
+- The private measurement-profile entry point is shown as a blocked placeholder only.
+
+Not included:
+
+- No profile image upload, portfolio management, public discovery, measurements, messaging, orders, payments, admin approval, backend code, API URLs, checkout, carts, courier tracking, AI, or production authorization.
 
 ## Milestone 01 - Project Setup and Shared Styling
 
@@ -49,4 +66,4 @@ Completed:
 
 Not included:
 
-- No welcome/authentication flow, profile editing journey, discovery product screen, messaging product screen, order workflow, backend code, API URLs, payments, checkout, carts, escrow, courier tracking, maps, calls, or AI behavior.
+- No discovery product screen, messaging product screen, order workflow, backend code, API URLs, payments, checkout, carts, escrow, courier tracking, maps, calls, or AI behavior.
